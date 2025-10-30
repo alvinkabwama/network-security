@@ -4,3 +4,7 @@ numpy
 requests
 pymongo
 flask
+certifi
+scikit-learn
+
+##-e .
