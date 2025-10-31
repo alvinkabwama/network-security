@@ -2,6 +2,7 @@ python-dotenv
 pandas
 numpy
 requests
+pymongo[srv]==3.12
 pymongo
 flask
 certifi
