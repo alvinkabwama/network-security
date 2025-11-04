@@ -1,67 +1,43 @@
-
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-import os
-import sys
-import json
-import certifi
+import os, sys, json
 import pandas as pd
 import pymongo
+import certifi
+from dotenv import load_dotenv
 from networksecurity.exception.exception import NetworkSecurityException
 from networksecurity.logging.logger import logging
 
-from dotenv import load_dotenv
-
+load_dotenv()
 MONGO_DB_URL = os.getenv("MONGO_DB_URL")
+if not MONGO_DB_URL:
+    raise NetworkSecurityException("MONGO_DB_URL is not set", sys)
 
-print(MONGO_DB_URL)
-ca=certifi.where()
-
-class NetworkDataExtract():
-    def __init__(self):
+class NetworkDataExtract:
+    def csv_to_json(self, file_path: str):
         try:
-            pass
+            df = pd.read_csv(file_path)
+            return df.to_dict(orient="records")
         except Exception as e:
             raise NetworkSecurityException(e, sys)
-        
-    def cv_to_json(self, file_path):
+
+    def insert_data_mongodb(self, records, database: str, collection: str) -> int:
         try:
-            data=pd.read_csv(file_path)
-            records = list(json.loads(data.T.to_json()).values())
-            return records
+            client = pymongo.MongoClient(
+                MONGO_DB_URL,
+                tlsCAFile=certifi.where()
+            )
+            db = client[database]
+            col = db[collection]
+            res = col.insert_many(records)
+            return len(res.inserted_ids)
         except Exception as e:
             raise NetworkSecurityException(e, sys)
-        
 
-    def insert_data_mongodb(self, records, database, collection):
-        try:
-            self.database=database
-            self.collection=collection
-            self.records=records
+FILE_PATH = "Network_Data/phisingData.csv"
+DATABASE = "Alvin"
+COLLECTION = "NetworkData"
 
-            self.mongo_client=pymongo.MongoClient(MONGO_DB_URL)
-            self.database = self.mongo_client[self.database]
-
-            self.collection=self.database[self.collection]
-            self.collection.insert_many(self.records)
-            return len(self.records)
-
-        except Exception as e:
-            raise NetworkSecurityException(e, sys)
-        
-
-
-FILE_PATH = 'Network_Data/phisingData.csv'
-DATABASE  = 'Alvin'
-COLLECTION = 'NetworkData'
-network_obj = NetworkDataExtract()
-records = network_obj.cv_to_json(FILE_PATH)
-
-print(records)
-length = network_obj.insert_data_mongodb(records, DATABASE, COLLECTION)
-
-print(length)
-
-
-
-
+network = NetworkDataExtract()
+records = network.csv_to_json(FILE_PATH)
+logging.info("Loaded %d records", len(records))
+count = network.insert_data_mongodb(records, DATABASE, COLLECTION)
+print(count)
