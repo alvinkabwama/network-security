@@ -7,5 +7,7 @@ pymongo
 flask
 certifi
 scikit-learn
+pyyaml
+dill
 
 ##-e .
