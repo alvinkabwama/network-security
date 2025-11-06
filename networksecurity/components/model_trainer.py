@@ -8,6 +8,9 @@ from networksecurity.utils.main_utils.utils import save_object, load_numpy_array
 from networksecurity.utils.ml_utils.metric.classification_metric import get_classification_score
 from networksecurity.utils.ml_utils.model.estimator import NetworkModel
 import mlflow
+import dagshub
+dagshub.init(repo_owner='alvinkabwama', repo_name='network-security', mlflow=True)
+
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
