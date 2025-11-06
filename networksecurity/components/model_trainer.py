@@ -6,14 +6,15 @@ from networksecurity.entity.config_entity import ModelTrainerConfig
 
 from networksecurity.utils.main_utils.utils import save_object, load_numpy_array_data, load_object, evaluate_models
 from networksecurity.utils.ml_utils.metric.classification_metric import get_classification_score
+from networksecurity.constant.training_pipeline import REPO_NAME, REPO_OWNER
 from networksecurity.utils.ml_utils.model.estimator import NetworkModel
 import mlflow
 import dagshub
-dagshub.init(repo_owner='alvinkabwama', repo_name='network-security', mlflow=True)
+
+dagshub.init(repo_owner=REPO_OWNER, repo_name=REPO_NAME, mlflow=True)
 
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import r2_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import (
@@ -64,7 +65,7 @@ class ModelTrainer:
         # ----- 2) Param grids -----
         params = {
             "LogisticRegression": {
-                "penalty": ["l2", "none"],
+                "penalty": ["l2", None],
                 "C": [0.01, 0.1, 1.0, 10.0],
                 "solver": ["lbfgs", "saga"],
                 "max_iter": [500],
@@ -170,6 +171,9 @@ class ModelTrainer:
 
         network_model = NetworkModel(preprocessor=preprocessor, model=best_model)
         save_object(file_path=self.model_trainer_config.trained_model_file_path, obj=network_model)
+
+        ##Saving the final model
+        save_object(file_path="final_model/model.pkl", obj=best_model)
 
 
         ##tracking with MLFlow

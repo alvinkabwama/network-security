@@ -154,6 +154,9 @@ class DataTransformation:
                 "Saved transformed train/test arrays and preprocessor object to disk"
             )
 
+            #Saving the final preprocessor file
+            save_object(file_path="final_model/preprocessor.pkl", obj=preprocessor_object)
+
             # --- 7) Build and return the artifact with output paths ---
             data_transformation_artifact: DataTransformationArtifact = (
                 DataTransformationArtifact(

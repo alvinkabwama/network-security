@@ -11,5 +11,7 @@ pyyaml
 dill
 mlflow==2.21.2
 dagshub
+fastapi
+uvicorn
 
 ##-e .
