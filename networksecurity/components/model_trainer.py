@@ -7,6 +7,7 @@ from networksecurity.entity.config_entity import ModelTrainerConfig
 from networksecurity.utils.main_utils.utils import save_object, load_numpy_array_data, load_object, evaluate_models
 from networksecurity.utils.ml_utils.metric.classification_metric import get_classification_score
 from networksecurity.utils.ml_utils.model.estimator import NetworkModel
+import mlflow
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
@@ -26,6 +27,25 @@ class ModelTrainer:
             
         except Exception as e:
             raise NetworkSecurityException(e, sys)
+        
+    def track_model(self, best_model, classification_metric_artifact:ClassificationMetricArtifact):
+        try:
+            with mlflow.start_run():
+                f1_score = classification_metric_artifact.f1_score
+                accuracy_score = classification_metric_artifact.accuracy_score
+                precision_score = classification_metric_artifact.precision_score
+                recall_score = classification_metric_artifact.recall_score
+
+                mlflow.log_metric("f1_score", f1_score)
+                mlflow.log_metric("accuracy_score", accuracy_score)
+                mlflow.log_metric("precision_score", precision_score)
+                mlflow.log_metric("recall_score", recall_score)
+
+                mlflow.sklearn.log_model(best_model, "model")
+
+        except Exception as e:
+            raise NetworkSecurityException(e, sys)
+
         
     def train_model(self, X_train, y_train, X_test, y_test):
         # ----- 1) Define models -----
@@ -52,16 +72,17 @@ class ModelTrainer:
                 "weights": ["uniform", "distance"],
                 "metric": ["minkowski"],
                 "p": [1, 2]
-            },
-
-            "GradientBoostingClassifier": {
-                "n_estimators": [100, 200, 400],
-                "learning_rate": [0.05, 0.1],
-                "max_depth": [2, 3, 4],
-                "subsample": [0.9, 1.0],
-                "min_samples_split": [2, 5],
-                "min_samples_leaf": [1, 2]
             }
+            # ,
+
+            # "GradientBoostingClassifier": {
+            #     "n_estimators": [100, 200, 400],
+            #     "learning_rate": [0.05, 0.1],
+            #     "max_depth": [2, 3, 4],
+            #     "subsample": [0.9, 1.0],
+            #     "min_samples_split": [2, 5],
+            #     "min_samples_leaf": [1, 2]
+            # }
             # ,
             # "RandomForestClassifier": {
             #     "n_estimators": [200, 400],
@@ -146,6 +167,11 @@ class ModelTrainer:
 
         network_model = NetworkModel(preprocessor=preprocessor, model=best_model)
         save_object(file_path=self.model_trainer_config.trained_model_file_path, obj=network_model)
+
+
+        ##tracking with MLFlow
+        self.track_model(best_model=best_model, classification_metric_artifact=classification_train_metric)
+        self.track_model(best_model=best_model, classification_metric_artifact=classification_test_metric)
 
         # ----- 7) Build and return artifact -----
         model_trainer_artifact = ModelTrainerArtifact(
