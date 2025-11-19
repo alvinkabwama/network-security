@@ -40,25 +40,9 @@ Traffic metadata
 Label: 0 = safe, 1 = malicious
 
 
-🧩. Project Structure
-network-security/
-│
-├── networksecurity/
-│   ├── cloud/
-│   ├── components/
-│   ├── constant/
-│   ├── entity/
-│   ├── exception/
-│   ├── logging/
-│   ├── pipeline/
-│   └── utils/
-│
-├── app.py
-├── Dockerfile
-├── data_schema/
-└── README.md
 
 🧪Key Features
+
 ✔ Data Ingestion
 
 Reads raw data from MongoDB → saves train/test sets.
