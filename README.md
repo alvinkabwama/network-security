@@ -3,7 +3,7 @@
 
 A complete machine learning system for network intrusion detection — from raw data ingestion to cloud deployment.
 
-🚀 1. Project Overview
+🚀Project Overview
 
 This project is an end-to-end machine learning pipeline designed to classify network traffic as benign or malicious.
 It demonstrates my practical skills as a:
@@ -17,7 +17,7 @@ MLOps Engineer
 Unlike tutorials that stop at “train the model,” this repo shows the full production lifecycle:
 ingestion → validation → transformation → training → evaluation → packaging → CI/CD → deployment → inference API.
 
-🔍 2. Problem Statement
+🔍Problem Statement
 
 Modern network environments face continuous threats: phishing, domain abuse, and malicious traffic patterns.
 
@@ -39,61 +39,8 @@ Traffic metadata
 
 Label: 0 = safe, 1 = malicious
 
-This frames a binary classification intrusion detection task.
 
-🏗️ 3. Architecture Overview
-High-Level System Architecture
-                          ┌──────────────────────────┐
-                          │      GitHub Repo         │
-                          └───────┬──────────────────┘
-                                  │ Push to main
-                                  ▼
-                      ┌──────────────────────────┐
-                      │     GitHub Actions       │
-                      │  (CI/CD Workflow)        │
-                      └───────┬──────────▲──────┘
-                              │ Build     │ Deploy
-                              ▼           │
-            ┌──────────────────────────────────────────┐
-            │  Build Docker Image → Push to AWS ECR    │
-            └────────────────┬─────────────────────────┘
-                             │
-                             ▼ Pull
-                 ┌──────────────────────────┐
-                 │ AWS EC2 (Docker Host)    │
-                 │ Runs FastAPI Inference   │
-                 └───────────┬──────────────┘
-                             │
-                             ▼
-                    User uploads CSV →
-             REST API returns predictions
-
-📊 4. ML Pipeline Architecture
-End-to-End ML Workflow
-Raw Data (MongoDB)
-        │
-        ▼
-┌──────────────────────┐
-│ 1. Data Ingestion     │
-└───────────┬──────────┘
-            ▼
-┌───────────────────────────┐
-│ 2. Data Validation         │
-└───────────┬───────────────┘
-            ▼
-┌──────────────────────────┐
-│ 3. Data Transformation    │
-└───────────┬──────────────┘
-            ▼
-┌──────────────────────────┐
-│ 4. Model Training         │
-└───────────┬──────────────┘
-            ▼
-┌──────────────────────────┐
-│ 5. Artifact Storage       │
-└──────────────────────────┘
-
-🧩 5. Project Structure
+🧩. Project Structure
 network-security/
 │
 ├── networksecurity/
@@ -111,7 +58,7 @@ network-security/
 ├── data_schema/
 └── README.md
 
-🧪 6. Key Features
+🧪Key Features
 ✔ Data Ingestion
 
 Reads raw data from MongoDB → saves train/test sets.
@@ -136,13 +83,10 @@ Uploads artifacts + trained models to S3 for versioning.
 
 CSV upload → Prediction table → HTML output.
 
-🐳 7. Docker & Deployment (High-Level)
-GitHub → GitHub Actions → Docker Build
-           │
-           ▼
-Push to AWS ECR → EC2 pulls → FastAPI live
+🐳Docker & Deployment (High-Level)
+GitHub → GitHub Actions → Docker → Build Push to AWS ECR → EC2 pulls → FastAPI live
 
-🔁 8. CI/CD Pipeline (Simplified)
+🔁CI/CD Pipeline (Simplified)
 
 Code pushed → GitHub Actions starts.
 
@@ -154,16 +98,16 @@ Push to ECR.
 
 EC2 automatically pulls + restarts container.
 
-📦 9. Running Locally
+📦Running Locally
 pip install -r requirements.txt
 python networksecurity/pipeline/training_pipeline.py
 uvicorn app:app --port 8888
 
-☁️ 10. Running in Docker
+☁️Running in Docker
 docker build -t network-security .
 docker run -p 8888:8888 network-security
 
-🎯 11. Future Improvements
+🎯Future Improvements
 
 Add explainability (SHAP)
 
@@ -173,13 +117,7 @@ Scheduled retraining
 
 Better model registry
 
-👤 Author
+👤Author
 
 Kabwama Leonald Alvin
 Machine Learning Engineer | MLOps | AWS | DevOps
-
-5️⃣ Save the File
-
-Press:
-
-CTRL + S
